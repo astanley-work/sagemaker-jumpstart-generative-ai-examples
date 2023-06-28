@@ -22,4 +22,4 @@ Overall, this repository provides users with a powerful tool for generating high
 PHOTO OWNERSHIP:
 - All photos in the 01-stable-diffusion-cats/data directory belong to June Won (junghw@amazon.com) 
 - All photos in the 01-stable-diffusion-cats/img/cute french bull bog puppy directory belong to Arunprasath Shankar (arunprsh@amazon.com)
-- All other photos in 01-stable-diffusion-cats directory were created using stable diffusion
+- All other photos in 01-stable-diffusion-cats directory were either created using stable diffusion or are screenshots of the AWS Management Console
