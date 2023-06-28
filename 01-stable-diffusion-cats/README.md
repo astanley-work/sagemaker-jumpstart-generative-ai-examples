@@ -20,5 +20,6 @@ By following the steps outlined in the notebook, you can collect a few images of
 Overall, this repository provides users with a powerful tool for generating high-quality images, even with limited datasets. The Stable Diffusion technique offers a versatile and efficient way to create customized and imaginative images.
 
 PHOTO OWNERSHIP:
-- All photos in the 01-stable-diffusion-cats/img directory belong to June Won (junghw@amazon.com) or Arunprasath Shankar (arunprsh@amazon.com)
+- All photos in the 01-stable-diffusion-cats/data directory belong to June Won (junghw@amazon.com) 
+- All photos in the 01-stable-diffusion-cats/img/cute french bull bog puppy directory belong to Arunprasath Shankar (arunprsh@amazon.com)
 - All other photos in 01-stable-diffusion-cats directory were created using stable diffusion
