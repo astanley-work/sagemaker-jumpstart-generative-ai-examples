@@ -1,14 +1,14 @@
 
-# Lab 11: Deploying a auto start/stop Amazon SageMaker Foundation Model endpoint backed by a API Gateway/Lambda
+# Lab 09: Deploying an auto start/stop Amazon SageMaker Foundation Model endpoint backed by an API Gateway/Lambda
 
-This demo code provides you with a template to develop an integration with an Amazon SageMaker foundation model fronted by a serverless API with a simple dynamodb authorizer using CDK.
+In this lab, we will walkthrough a demo on how to deploy an Amazon SageMaker foundation model fronted by a serverless API with a basic dynamodb authorizer using CDK.
 
-The real-time endpoint also features a automatic start/stop functionality by setting an expiry datetime for the endpoint. Similar to a parking meter whereby you top up credits to ensure that your parking does not expire, in this case, you keep renewing the endpoint expiry date time to keep it running.
+In this demo we will also deploy a mechanism to manage our real-time endpoint which features an automatic start/stop functionality by setting an expiry datetime for the endpoint. Similar to a parking meter whereby you top up credits to ensure that your parking does not expire, in this case, you keep renewing the endpoint expiry date time to keep it running.
 
-This solution was implemented to solve a recurring problem with users leaving their Amazon SageMaker endpoint on and forgetting to turn it off. One way of solving it is to implement a schedule, however having to constantly set a pre-defined datetime can be cumbersome as schedules can change. Instead by intentionally forcing the user to top up tokens can raise the awareness of the cost of the endpoint (particularly for LLM endpoint) and also ensure that the user is intentional in how much more time they need to use the endpoint for testing.
+This solution was designed to solve a recurring problem with users leaving their Amazon SageMaker endpoint on and forgetting to delete them after usage. The approach taken solve this in the first iteration is to enforce users to renew their endpoint expiry times based on when they need it. By doing so, it raises the awareness of the cost of the endpoint (particularly for LLM endpoint) and also ensure that the user is intentional in how much more time they need to use the endpoint for testing.
 
 ## Table of contents
-- [Lab 11: Deploying a auto start/stop Amazon SageMaker Foundation Model endpoint backed by a API Gateway/Lambda](#lab-11-deploying-a-auto-startstop-amazon-sagemaker-foundation-model-endpoint-backed-by-a-api-gatewaylambda)
+- [Lab 09: Deploying an auto start/stop Amazon SageMaker Foundation Model endpoint backed by an API Gateway/Lambda](#lab-09-deploying-an-auto-startstop-amazon-sagemaker-foundation-model-endpoint-backed-by-an-api-gatewaylambda)
   - [Table of contents](#table-of-contents)
   - [Demo Overview](#demo-overview)
   - [Lab](#lab)
@@ -18,8 +18,9 @@ This solution was implemented to solve a recurring problem with users leaving th
   - [Real-time Endpoint Management Functions - Adding a new real-time endpoint](#real-time-endpoint-management-functions---adding-a-new-real-time-endpoint)
   - [Interacting with your real-time endpoint via API](#interacting-with-your-real-time-endpoint-via-api)
   - [Deploying an async endpoint (WIP)](#deploying-an-async-endpoint-wip)
+  - [Lab Notebook](#lab-notebook)
+  - [Clean up](#clean-up)
   - [How does the endpoint manager work?](#how-does-the-endpoint-manager-work)
-  - [To Do](#to-do)
   - [References](#references)
 ## Demo Overview
 
@@ -39,21 +40,16 @@ If you prefer to run this lab from you preferred IDE, ensure that AWS CLI and CD
    - Instance type: t3.small
 
 3. Open the Cloud9 IDE
-4. In the terminal, run the following cmd to clone the repository
+4. In the terminal, run the following cmd to clone the repository that contains the CDK stack we will be using for this lab.
 
     ```
-    git clone https://github.com/sunbc0120/sagemaker-jumpstart-generative-ai-examples.git
+    git clone https://github.com/dalacan/sagemaker-endpoint-manager.git
     ```
 
-5. In the terminal, navigate to lab 11 folder
+5. In the terminal, navigate to the stack folder
 
     ```
-    cd 11-api-gateway-managed-endpoint
-    ```
-
-    If you're in root
-    ```
-    cd sagemaker-jumpstart-generative-ai-examples/11-api-gateway-managed-endpoint
+    cd sagemaker-endpoint-manager
     ```
 
 
@@ -194,6 +190,7 @@ Example Response
 ]
 ```
 ---
+
 ## Real-time Endpoint Management Functions - Extending your real-time endpoint expiry time
 
 To extend the amount of time your endpoint will be kept alive, run the following:
@@ -328,6 +325,28 @@ If you'd like to deploy an asynchronous foundational model endpoint, follow this
 cdk deploy ModelAsyncStack
 ```
 ---
+
+## Lab Notebook
+
+In this section, we will explore how we can interact with the API gateway via notebook. To get started, open the [`00-api_gateway_managed_endpoint.ipynb`](00-api_gateway_managed_endpoint.ipynb) in your notebook environment (i.e. Amazon SageMaker Studio) and run through the instructions in the notebook.
+
+**Note:** If you're using Amazon SageMaker Studio, set your kernel image to Data Science 3.0
+
+The notebook will show you how to manage your endpoint, interact with your SageMaker endpoint API And how to use Langchain with APIGateway.
+
+---
+
+## Clean up
+
+Once you're done with this lab, you can clean up your resources by deleting the CDK stacks.
+
+In your IDE environment, run the following command to delete the stacks.
+
+```
+cdk destory --all
+```
+
+**Note:** As the stack is not aware of any endpoint created by the endpoint manager, make sure you check that you delete any endpoint created by the endpoint manager by going to the AWS console, go to Amazon SageMaker -> Inference -> Endpoint and delete the endpoints (i.e. `demo-Falcon40B-Endpoint`)
 ## How does the endpoint manager work?
 
 1. When the stack is provisioned for the first time, the user defined the initial required endpoint provision time in minutes (`initial_provision_time_minutes`) in the `app.py`
@@ -337,19 +356,7 @@ cdk deploy ModelAsyncStack
 5. Users can also extend the endpoint uptime by sending a request to the `endpoint-expiry` API by providing the time in minutes the request body. For more information, refer to [Real-time Endpoint Management Functions - Extending your real-time endpoint expiry](#real-time-endpoint-management-functions---extending-your-real-time-endpoint-expiry-time).
 6. You can also add a new endpoint to be managed by the endpoint manager for pre-existing Amazon SageMaker endpoint configurations. For more information, refer to [Real-time Endpoint Management Functions - Adding a new real-time endpoint](#real-time-endpoint-management-functions---adding-a-new-real-time-endpoint).
 ---
-## To Do 
-- [x] Bug - if time is expired, extending the time will need to be greater than the different of current time + time required. Will need to add a check to see if time is expired, add time from now + time required. 
-- [x] Add support for multiple endpoints
-- [x] Add support for managing existing endpoints
-- [x] Add support for adding new endpoints via API
-- [ ] Add support for cognito users
-- [ ] Add support for expiry notifications
-- [ ] Add UI to manage endpoint expiry
-- [ ] Automatic shutdown of endpoint based on endpoint activity (i.e. <X% of usage)
-- [ ] Add configuration to use pre-defined dynamodb auth table or create new dynamodb table.
-- [ ] Extend async solution
 
 ## References
 
 Building an API Gateway with CDK - https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_apigateway/README.html#lambda-based-request-authorizer
-
